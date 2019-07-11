@@ -1,22 +1,18 @@
-From 84e61e758bf3eeb0763231d171e4a77a98d2dc6b Mon Sep 17 00:00:00 2001
-From: Morris Hafner <hafnermorris@gmail.com>
-Date: Tue, 7 May 2019 23:31:19 +0100
-Subject: [PATCH] Work around missing declarations in MinGW headers
+From 9e36cb1a9b4359354ee0356a27104d9fa0e1911d Mon Sep 17 00:00:00 2001
+From: Morris Hafner <morris.hafner@codeplay.com>
+Date: Fri, 12 Jul 2019 15:17:51 +0100
+Subject: [PATCH 2/3] Work around missing declarations in MinGW headers
 
 ---
- loader/windows/icd_windows_hkr.c | 27 ++++++++++++++++++++++++++-
- 1 file changed, 26 insertions(+), 1 deletion(-)
+ loader/windows/icd_windows_hkr.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
 diff --git a/loader/windows/icd_windows_hkr.c b/loader/windows/icd_windows_hkr.c
-index 5f6c534..737aaad 100644
+index 3387181..ca9f27a 100644
 --- a/loader/windows/icd_windows_hkr.c
 +++ b/loader/windows/icd_windows_hkr.c
-@@ -23,9 +23,34 @@
- #include <assert.h>
- #include <stdbool.h>
- #include <initguid.h>
--#include <Devpkey.h>
-+#include <devpkey.h>
+@@ -26,6 +26,30 @@
+ #include <devpkey.h>
  #include <devguid.h>
  
 +#define CM_GETIDLIST_FILTER_PRESENT            0x00000100
@@ -43,10 +39,9 @@ index 5f6c534..737aaad 100644
 +#define DEFINE_DEVPROPKEY(name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8, pid) EXTERN_C const DEVPROPKEY DECLSPEC_SELECTANY name = {{ l, w1, w2, {b1, b2, b3, b4, b5, b6, b7, b8}}, pid}
 +DEFINE_DEVPROPKEY (DEVPKEY_Device_ClassGuid, 0xa45c254e, 0xdf1c, 0x4efd, 0x80, 0x20, 0x67, 0xd1, 0x46, 0xa8, 0x50, 0xe0, 10);
 +
-+
   // This GUID was only added to devguid.h on Windows SDK v10.0.16232 which
   // corresponds to Windows 10 Redstone 3 (Windows 10 Fall Creators Update).
  DEFINE_GUID(OCL_GUID_DEVCLASS_SOFTWARECOMPONENT, 0x5c4c3332, 0x344d, 0x483c, 0x87, 0x39, 0x25, 0x9e, 0x93, 0x4c, 0x9c, 0xc8);
 -- 
-2.21.0
+2.17.1
 
