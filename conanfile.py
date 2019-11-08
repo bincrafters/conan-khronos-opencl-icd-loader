@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from conans import ConanFile, CMake, tools
 import os
 
@@ -12,7 +10,6 @@ class KhronosOpenCLICDLoaderConan(ConanFile):
               "icd-loader")
     url = "https://github.com/bincrafters/conan-khronos-opencl-icd-loader"
     homepage = "https://github.com/KhronosGroup/OpenCL-ICD-Loader"
-    author = "Bincrafters <bincrafters@gmail.com>"
     license = "Apache-2.0"
     exports = ["LICENSE.md"]
     exports_sources = [
@@ -35,6 +32,7 @@ class KhronosOpenCLICDLoaderConan(ConanFile):
 
     def configure(self):
         del self.settings.compiler.libcxx
+        del self.settings.compiler.cppstd
 
     def source(self):
         commit = "6c03f8b58fafd9dd693eaac826749a5cfad515f8"
