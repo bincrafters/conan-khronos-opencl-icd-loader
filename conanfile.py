@@ -4,7 +4,7 @@ import os
 
 class KhronosOpenCLICDLoaderConan(ConanFile):
     name = "khronos-opencl-icd-loader"
-    version = "20190827"
+    version = "20191007"
     description = "The OpenCL ICD Loader"
     topics = ("conan", "opencl", "opencl-icd-loader", "build-system",
               "icd-loader")
@@ -14,8 +14,8 @@ class KhronosOpenCLICDLoaderConan(ConanFile):
     exports = ["LICENSE.md"]
     exports_sources = [
         "CMakeLists.txt",
-        "0001-OpenCL-Headers-Remove-ABI-hackery.patch",
-        "0002-Work-around-missing-declarations-in-MinGW-headers.patch",
+        "0001-Work-around-missing-declarations-in-MinGW-headers.patch",
+        "0002-link-windows-libs.patch"
     ]
     generators = "cmake"
     settings = "os", "arch", "compiler", "build_type"
@@ -35,8 +35,8 @@ class KhronosOpenCLICDLoaderConan(ConanFile):
         del self.settings.compiler.cppstd
 
     def source(self):
-        commit = "6c03f8b58fafd9dd693eaac826749a5cfad515f8"
-        sha256 = "c94d5bb6dc980c4d41d73e2b81663a19aabe494e923e2d0eec72a4c95b318438"
+        commit = "978b4b3a29a3aebc86ce9315d5c5963e88722d03"
+        sha256 = "0c14bf890bd198ef5a814b5b7ed57b69e890b0c0a1bcfba8fdad996fa1a97fc7"
         tools.get("{0}/archive/{1}.tar.gz".format(self.homepage, commit),
                   sha256=sha256)
         extracted_dir = "OpenCL-ICD-Loader-" + commit
@@ -44,6 +44,7 @@ class KhronosOpenCLICDLoaderConan(ConanFile):
 
     def _configure_cmake(self):
         cmake = CMake(self)
+        cmake.definitions["USE_DYNAMIC_VCXX_RUNTIME"] = True
         if self._is_mingw():
             cmake.definitions.update({
                 "CMAKE_C_STANDARD": "99",
@@ -61,13 +62,15 @@ class KhronosOpenCLICDLoaderConan(ConanFile):
         return subsystem_matches or compiler_matches
 
     def build(self):
-        tools.patch(base_path=self._source_subfolder,
-                    patch_file="0001-OpenCL-Headers-Remove-ABI-hackery.patch")
         if self._is_mingw():
             tools.patch(
                 base_path=self._source_subfolder,
                 patch_file=
-                "0002-Work-around-missing-declarations-in-MinGW-headers.patch")
+                "0001-Work-around-missing-declarations-in-MinGW-headers.patch")
+            tools.patch(
+                base_path=self._source_subfolder,
+                patch_file="0002-link-windows-libs.patch"
+            )
         cmake = self._configure_cmake()
         cmake.build()
 
@@ -84,4 +87,4 @@ class KhronosOpenCLICDLoaderConan(ConanFile):
             self.cpp_info.libs.extend(["pthread", "dl"])
         elif self.settings.os == "Windows" and \
              self.settings.get_safe("os.subsystem") != "wsl":
-            self.cpp_info.libs.append("cfgmgr32")
+            self.cpp_info.libs += "cfgmgr32", "ole32"
