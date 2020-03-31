@@ -11,7 +11,6 @@ class KhronosOpenCLICDLoaderConan(ConanFile):
     url = "https://github.com/bincrafters/conan-khronos-opencl-icd-loader"
     homepage = "https://github.com/KhronosGroup/OpenCL-ICD-Loader"
     license = "Apache-2.0"
-    exports = ["LICENSE.md"]
     exports_sources = [
         "CMakeLists.txt",
         "0001-Work-around-missing-declarations-in-MinGW-headers.patch",
