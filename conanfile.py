@@ -20,7 +20,7 @@ class KhronosOpenCLICDLoaderConan(ConanFile):
     settings = "os", "arch", "compiler", "build_type"
     options = {"fPIC": [True, False], "shared": [True, False]}
     default_options = {"fPIC": True, "shared": False}
-    requires = "khronos-opencl-headers/20190806@bincrafters/stable"
+    requires = "opencl-headers/2020.03.13"
     short_paths = True
     _source_subfolder = "source_subfolder"
     _build_subfolder = "build_subfolder"
